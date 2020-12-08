@@ -1,13 +1,13 @@
 This is an implementation of statistical analysis on data in C.
 
-The program can:
+#The program can:
 
-  perform single-variable statistical analysis (eg. calculate mean, standard deviation)
+	1. perform single-variable statistical analysis (eg. calculate mean, standard deviation)
   
-  perform statistical analysis on multiple results (eg. calculate weighted mean, total standard deviation)
+	2. perform statistical analysis on multiple results (eg. calculate weighted mean, total standard deviation)
   
-  perfomr linear regression
+	3. perform linear regression
   
-Library used to plot data is from:
+#Library used to plot data is from:
 
-  https://github.com/InductiveComputerScience/pbPlots
+	https://github.com/InductiveComputerScience/pbPlots
