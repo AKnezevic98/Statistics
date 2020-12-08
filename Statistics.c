@@ -50,9 +50,9 @@ unsigned char main(){
 	unsigned char num = 1;
 	START:
 	printf("What do you need?\n1-Single variable stat.\n2-Results stat.\n3-Linear regression\n0-exit\n");
-	fflush(stdin);
 	scanf("%hhu", &num);
-		
+	fflush(stdin);
+	
 	switch(num){
 		
 		//exit
@@ -78,8 +78,8 @@ unsigned char main(){
 			
 			//Data reading definition
 			printf("Do you want to read data from a file?\n1-Yes .txt file\n2-Yes .bin file\n0-No\n");
-			fflush(stdin);
 			scanf("%hhu", &num);
+			fflush(stdin);
 			
 			switch(num){
 				//Manual input
@@ -89,16 +89,15 @@ unsigned char main(){
 					printf("Insert sample vector: (you end by inserting non-number)\n");
 					data = (double*)realloc(data, sizeof(double));
 					printf("x[%lu]=", k+1);
-					fflush(stdin);
 					while(scanf(" %lf", &data[k])==1)
 					{
+						fflush(stdin);
 						k++; i=0;
 						data = (double*)realloc(data, sizeof(double)*(k+1));
 						printf("x[%lu]=", k+1);
-						fflush(stdin);
 					}
-					data = (double*)realloc(data, sizeof(double)*k);
 					fflush(stdin);
+					data = (double*)realloc(data, sizeof(double)*k);
 	
 					if(i==1){
 						printf("Input ERROR!\n");
@@ -112,15 +111,24 @@ unsigned char main(){
 					char filename[64];
 					char test;
 					printf("Please enter file name: (excluding extension)\nFile must be organized in a column of floating point numbers!\n");
-					fflush(stdin);
 					fgets(filename, 60, stdin);
+					fflush(stdin);
 	
 					if(strlen(filename)>60){
 						printf("ERROR: Filename too long! Please keep file name shorter than 60 characters!\n");
 						exit(110);
 					}
+					
+					//removing newline from filename
+					for(i=0; i<60; i++){
+						if(filename[i]=='\n' || filename[i]=='\r'){
+							filename[i] = '.';
+							filename[i+1] = '\0';
+							break;
+						}
+					}
 	
-					strcat(filename, ".txt"); 
+					strcat(filename, "txt"); 
 					FILE* f = fopen(filename, "r");
 	
 					if(!f){
@@ -136,22 +144,32 @@ unsigned char main(){
 						exit(112);
 					}
 					
-					//get number of lines in 
+					//get number of lines in file
 					k = 0;
 					do{
 						test= getc(f);
-						if(test == "\n"){
+						if(test == '\n'){
 							k++;
+							num = 1;
+						}else if(test!=EOF){
+							num = 0;
 						}
-					}while(f!=EOF);
-					fseek(f, 0, SEEK_SET); k++;
+					}while(test!=EOF);
+					fseek(f, 0, SEEK_SET);
+					if(num == 0){
+						k++;
+					}
 					
 					//read data
 					data = (double*)realloc(data, k*sizeof(double));
 					for(i=0; i<k-1; i++){
 						fscanf(f, "%lf\n", &data[i]);
 					}
-					fscanf(f, "%lf", &data[k-1]);
+					if(num == 0){
+						fscanf(f, "%lf", &data[k-1]);
+					} else{
+						fscanf(f, "%lf\n", &data[k-1]);
+					}
 					fclose(f);
 					break;
 				}
@@ -160,15 +178,24 @@ unsigned char main(){
 				case 2:{
 					char filename[64];
 					printf("Please enter file name: (excluding extension)\nFile must be organized in long doubles!\n");
-					fflush(stdin);
 					fgets(filename, 60, stdin);
+					fflush(stdin);
 	
 					if(strlen(filename)>60){
 						printf("ERROR: Filename too long! Please keep file name shorter than 60 characters!\n");
 						exit(120);
 					}
+					
+					//removing newline from filename
+					for(i=0; i<60; i++){
+						if(filename[i]=='\n' || filename[i]=='\r'){
+							filename[i] = '.';
+							filename[i+1] = '\0';
+							break;
+						}
+					}
 	
-					strcat(filename, ".bin");
+					strcat(filename, "bin");
 					FILE* f = fopen(filename, "rb");
 	
 					if(!f){
@@ -250,8 +277,8 @@ unsigned char main(){
 			dataset* data = (dataset*)malloc(0);
 			
 			printf("Do you want to read data from a file?\n1-Yes .txt file\n2-Yes .bin file\n0-No\n");
-			fflush(stdin);
 			scanf("%hhu", &num);
+			fflush(stdin);
 			
 			switch(num){
 				//Manual input
@@ -261,16 +288,15 @@ unsigned char main(){
 					printf("Insert sample vector: (you end by inserting non-number)\nFormat: x, Mx\n");
 					data = (dataset*)realloc(data, sizeof(dataset));
 					printf("x[%lu], M[%lu] = ", k+1, k+1);
-					fflush(stdin);
 					while(scanf("%lf, %lf", &data[k].data1, &data[k].data2)==2)
 					{
+						fflush(stdin);
 						k++; i=0;
 						data = (dataset*)realloc(data, sizeof(dataset)*(k+1));
 						printf("x[%lu], M[%lu] = ", k+1, k+1);
-						fflush(stdin);
 					}
-					data = (dataset*)realloc(data, sizeof(dataset)*k);
 					fflush(stdin);
+					data = (dataset*)realloc(data, sizeof(dataset)*k);
 	
 					if(i==1){
 						printf("Input ERROR!\n");
@@ -284,16 +310,24 @@ unsigned char main(){
 					char filename[64];
 					char test;
 					printf("Please enter file name: (excluding extension)\nFile must be organized in a column of x, Mx!\n");
-					fflush(stdin);
 					fgets(filename, 60, stdin);
+					fflush(stdin);
 	
 					if(strlen(filename)>60){
 						printf("ERROR: Filename too long! Please keep file name shorter than 60 characters!\n");
 						exit(210);
 					}
+					
+					//removing newline from filename
+					for(i=0; i<60; i++){
+						if(filename[i]=='\n' || filename[i]=='\r'){
+							filename[i] = '.';
+							filename[i+1] = '\0';
+							break;
+						}
+					}
 	
-					fflush(stdin);
-					strcat(filename, ".txt");
+					strcat(filename, "txt"); 
 					FILE* f = fopen(filename, "r");
 	
 					if(!f){
@@ -309,22 +343,32 @@ unsigned char main(){
 						exit(212);
 					}
 					
-					//get number of lines in 
+					//get number of lines in file
 					k = 0;
 					do{
-						test = getc(f);
-						if(test == "\n"){
+						test= getc(f);
+						if(test == '\n'){
 							k++;
+							num = 1;
+						}else if(test!=EOF){
+							num = 0;
 						}
-					}while(f!=EOF);
-					fseek(f, 0, SEEK_SET); k++;
+					}while(test!=EOF);
+					fseek(f, 0, SEEK_SET);
+					if(num == 0){
+						k++;
+					}
 					
 					//read data
 					data = (dataset*)realloc(data, k*sizeof(dataset));
 					for(i=0; i<k-1; i++){
 						fscanf(f, "%lf, %lf\n", &data[i].data1, &data[i].data2);
 					}
-					fscanf(f, "%lf, %lf", &data[k-1].data1, &data[k-1].data2);
+					if(num == 0){
+						fscanf(f, "%lf, %lf", &data[k-1].data1, &data[k-1].data2);
+					} else{
+						fscanf(f, "%lf, %lf\n", &data[k-1].data1, &data[k-1].data2);
+					}
 					fclose(f);
 					break;
 				}
@@ -333,15 +377,24 @@ unsigned char main(){
 				case 2:{
 					char filename[64];
 					printf("Please enter file name: (excluding extension)\nFile must be organized in 2 long doubles!\n");
-					fflush(stdin);
 					fgets(filename, 60, stdin);
+					fflush(stdin);
 	
 					if(strlen(filename)>60){
 						printf("ERROR: Filename too long! Please keep file name shorter than 60 characters!\n");
 						exit(220);
 					}
+					
+					//removing newline from filename
+					for(i=0; i<60; i++){
+						if(filename[i]=='\n' || filename[i]=='\r'){
+							filename[i] = '.';
+							filename[i+1] = '\0';
+							break;
+						}
+					}
 	
-					strcat(filename, ".bin");
+					strcat(filename, "bin");
 					FILE* f = fopen(filename, "rb");
 	
 					if(!f){
@@ -402,8 +455,8 @@ unsigned char main(){
 			double* r = (double*)malloc(0);
 			
 			printf("Do you want to read data from a file?\n1-Yes .txt file\n2-Yes .bin file\n0-No\n");
-			fflush(stdin);
 			scanf("%hhu", &num);
+			fflush(stdin);
 			
 			switch(num){
 				//Manual input
@@ -413,16 +466,15 @@ unsigned char main(){
 					printf("Insert sample vector: (you end by inserting non-number)\nFormat: x, y\n");
 					data = (dataset*)realloc(data, sizeof(dataset));
 					printf("x[%lu], y[%lu]=", k+1, k+1);
-					fflush(stdin);
 					while(scanf("%lf, %lf", &data[k].data1, &data[k].data2)==2)
 					{
+						fflush(stdin);
 						k++; i=0;
 						data = (dataset*)realloc(data, sizeof(dataset)*(k+1));
 						printf("x[%lu], y[%lu]=", k+1, k+1);
-						fflush(stdin);
 					}
-					data = (dataset*)realloc(data, sizeof(dataset)*k);
 					fflush(stdin);
+					data = (dataset*)realloc(data, sizeof(dataset)*k);
 	
 					if(i==1){
 						printf("Input ERROR!\n");
@@ -436,15 +488,24 @@ unsigned char main(){
 					char filename[64];
 					char test;
 					printf("Please enter file name: (excluding extension)\nFile must be organized in a column of x, y!\n");
-					fflush(stdin);
 					fgets(filename, 60, stdin);
+					fflush(stdin);
 	
 					if(strlen(filename)>60){
 						printf("ERROR: Filename too long! Please keep file name shorter than 60 characters!\n");
 						exit(310);
 					}
+					
+					//removing newline from filename
+					for(i=0; i<60; i++){
+						if(filename[i]=='\n' || filename[i]=='\r'){
+							filename[i] = '.';
+							filename[i+1] = '\0';
+							break;
+						}
+					}
 	
-					strcat(filename, ".txt");
+					strcat(filename, "txt"); 
 					FILE* f = fopen(filename, "r");
 	
 					if(!f){
@@ -460,22 +521,32 @@ unsigned char main(){
 						exit(312);
 					}
 					
-					//get number of lines in 
+					//get number of lines in file
 					k = 0;
 					do{
-						test = getc(f);
-						if(test == "\n"){
+						test= getc(f);
+						if(test == '\n'){
 							k++;
+							num = 1;
+						}else if(test!=EOF){
+							num = 0;
 						}
-					}while(f!=EOF);
-					fseek(f, 0, SEEK_SET); k++;
+					}while(test!=EOF);
+					fseek(f, 0, SEEK_SET);
+					if(num == 0){
+						k++;
+					}
 					
 					//read data
 					data = (dataset*)realloc(data, k*sizeof(dataset));
 					for(i=0; i<k-1; i++){
 						fscanf(f, "%lf, %lf\n", &data[i].data1, &data[i].data2);
 					}
-					fscanf(f, "%lf, %lf", &data[k-1].data1, &data[k-1].data2);
+					if(num == 0){
+						fscanf(f, "%lf, %lf", &data[k-1].data1, &data[k-1].data2);
+					} else{
+						fscanf(f, "%lf, %lf\n", &data[k-1].data1, &data[k-1].data2);
+					}
 					fclose(f);
 					break;
 				}
@@ -484,15 +555,24 @@ unsigned char main(){
 				case 2:{
 					char filename[64];
 					printf("Please enter file name: (excluding extension)\nFile must be organized in 2 long doubles!\n");
-					fflush(stdin);
 					fgets(filename, 60, stdin);
+					fflush(stdin);
 	
 					if(strlen(filename)>60){
 						printf("ERROR: Filename too long! Please keep file name shorter than 60 characters!\n");
 						exit(320);
 					}
+					
+					//removing newline from filename
+					for(i=0; i<60; i++){
+						if(filename[i]=='\n' || filename[i]=='\r'){
+							filename[i] = '.';
+							filename[i+1] = '\0';
+							break;
+						}
+					}
 	
-					strcat(filename, ".bin");
+					strcat(filename, "bin");
 					FILE* f = fopen(filename, "rb");
 	
 					if(!f){
@@ -553,7 +633,8 @@ unsigned char main(){
 			
 			if(del==0){
 				printf("Do you want to skip automatic removal of bad points?\n1-Yes\n0-No\n");
-				scanf(" %hhu", &num);
+				scanf("%hhu", &num);
+				fflush(stdin);
 				if(num!=1 && num!=0){
 					printf("ERROR: Invalid input!\n");
 					exit(333);
@@ -700,6 +781,7 @@ unsigned char main(){
 	printf("Do you want to redo?\n1-Yes\n0-No\n");
 	fflush(stdin);
 	scanf("%hhu", &num);
+	fflush(stdin);
 	if(num==1) goto START;
 	
 	return 0;
