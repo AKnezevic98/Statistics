@@ -44,10 +44,11 @@ double max(double a[], unsigned long int length){
 	return maximum;
 }
 
+unsigned char num = 1;
+unsigned char num2 = 0;
 
 unsigned char main(){
 	//Initial user input, defines what the user wants the program to do
-	unsigned char num = 1;
 	START:
 	printf("What do you need?\n1-Single variable stat.\n2-Results stat.\n3-Linear regression\n0-exit\n");
 	scanf("%hhu", &num);
@@ -446,7 +447,6 @@ unsigned char main(){
 		
 		//Linear regression
 		case 3:{
-			unsigned char num2 = 0;
 			long int i=0, k=0, del=0, difi=0;
 			double sumx=0, sumy=0, sumxy=0, sumx2=0, sumy2=0;
 			double a, b, Ma, Mb, R;
@@ -678,6 +678,7 @@ unsigned char main(){
 			if(del==0){
 				printf("Do you want to skip automatic removal of bad points?\n1-Yes\n0-No\n");
 				scanf("%hhu", &num2);
+				printf("%hhu\n", num);
 				fflush(stdin);
 				if(num2!=1 && num2!=0){
 					printf("ERROR: Invalid input!\n");
@@ -807,56 +808,50 @@ unsigned char main(){
 				// x - y
 				case 0:{
 					settings->xLabel = L"Y";
-					settings->xLabelLength = wcslen(settings->xLabel);
 					settings->yLabel = L"X";
-					settings->yLabelLength = wcslen(settings->yLabel);
 					break;
 				}
 				
 				// lnx - y
 				case 1:{
 					settings->xLabel = L"Y";
-					settings->xLabelLength = wcslen(settings->xLabel);
 					settings->yLabel = L"lnX";
-					settings->yLabelLength = wcslen(settings->yLabel);
 					break;
 				}
 				
 				// x - lny
 				case 2:{
 					settings->xLabel = L"lnY";
-					settings->xLabelLength = wcslen(settings->xLabel);
 					settings->yLabel = L"X";
-					settings->yLabelLength = wcslen(settings->yLabel);
 					break;
 				}
 				
 				// lnx - lny
 				case 3:{
 					settings->xLabel = L"lnY";
-					settings->xLabelLength = wcslen(settings->xLabel);
 					settings->yLabel = L"lnX";
-					settings->yLabelLength = wcslen(settings->yLabel);
 					break;
 				}
 			}
 			settings->title = L"Linear regression y(x)";
 			settings->titleLength = wcslen(settings->title);
+			settings->xLabelLength = wcslen(settings->xLabel);
+			settings->yLabelLength = wcslen(settings->yLabel);
 			ScatterPlotSeries *s [] = {series, series2};
 			settings->scatterPlotSeries = s;
 			settings->scatterPlotSeriesLength = 2;
-			free(series); free(series2);
 		
 			RGBABitmapImageReference *canvasReference = CreateRGBABitmapImageReference();
 			DrawScatterPlotFromSettings(canvasReference, settings);
-			free(settings);
 		
 			size_t length;
 			double *pngdata = ConvertToPNG(&length, canvasReference->image);
 			WriteToFile(pngdata, length, "regression_plot.png");
-			free(pngdata);
 			
 			DeleteImage(canvasReference->image);
+			free(series); free(series2);
+			free(settings);
+			free(pngdata);
 			free(canvasReference);
 			
 			break;
