@@ -6,7 +6,7 @@ This is an implementation of statistical analysis on data in C.
   
 	2. perform statistical analysis on multiple results (eg. calculate weighted mean, total standard deviation)
   
-	3. perform linear regression
+	3. perform linear regression with automatic linearization
   
 ### Library used to plot data is from:
 
