@@ -806,36 +806,36 @@ unsigned char main(){
 			switch(num){
 				// x - y
 				case 0:{
-					settings->xLabel = L"X";
+					settings->xLabel = L"Y";
 					settings->xLabelLength = wcslen(settings->xLabel);
-					settings->yLabel = L"Y";
+					settings->yLabel = L"X";
 					settings->yLabelLength = wcslen(settings->yLabel);
 					break;
 				}
 				
 				// lnx - y
 				case 1:{
-					settings->xLabel = L"lnX";
+					settings->xLabel = L"Y";
 					settings->xLabelLength = wcslen(settings->xLabel);
-					settings->yLabel = L"Y";
+					settings->yLabel = L"lnX";
 					settings->yLabelLength = wcslen(settings->yLabel);
 					break;
 				}
 				
 				// x - lny
 				case 2:{
-					settings->xLabel = L"X";
+					settings->xLabel = L"lnY";
 					settings->xLabelLength = wcslen(settings->xLabel);
-					settings->yLabel = L"lnY";
+					settings->yLabel = L"X";
 					settings->yLabelLength = wcslen(settings->yLabel);
 					break;
 				}
 				
 				// lnx - lny
 				case 3:{
-					settings->xLabel = L"lnX";
+					settings->xLabel = L"lnY";
 					settings->xLabelLength = wcslen(settings->xLabel);
-					settings->yLabel = L"lnY";
+					settings->yLabel = L"lnX";
 					settings->yLabelLength = wcslen(settings->yLabel);
 					break;
 				}
@@ -845,14 +845,19 @@ unsigned char main(){
 			ScatterPlotSeries *s [] = {series, series2};
 			settings->scatterPlotSeries = s;
 			settings->scatterPlotSeriesLength = 2;
+			free(series); free(series2);
 		
 			RGBABitmapImageReference *canvasReference = CreateRGBABitmapImageReference();
 			DrawScatterPlotFromSettings(canvasReference, settings);
+			free(settings);
 		
 			size_t length;
 			double *pngdata = ConvertToPNG(&length, canvasReference->image);
 			WriteToFile(pngdata, length, "regression_plot.png");
+			free(pngdata);
+			
 			DeleteImage(canvasReference->image);
+			free(canvasReference);
 			
 			break;
 		}
