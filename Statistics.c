@@ -446,6 +446,7 @@ unsigned char main(){
 		
 		//Linear regression
 		case 3:{
+			unsigned char num2 = 0;
 			long int i=0, k=0, del=0, difi=0;
 			double sumx=0, sumy=0, sumxy=0, sumx2=0, sumy2=0;
 			double a, b, Ma, Mb, R;
@@ -603,6 +604,49 @@ unsigned char main(){
 				}
 			}
 			
+			printf("What is proposed linear relationship?\n0 ... x - y\n1 ... ln x - y\n2 ... x - ln y\n3 ... ln x - ln y\n");
+			scanf("%hhu", &num);
+			fflush(stdin);
+			
+			//automatic linearization
+			switch(num){
+				// x - y
+				case 0:{
+					break;
+				}
+				
+				// lnx - y
+				case 1:{
+					for(i=0; i<k; i++){
+						data[i].data1 = log(data[i].data1);
+					}
+					break;
+				}
+				
+				// x - lny
+				case 2:{
+					for(i=0; i<k; i++){
+						data[i].data2 = log(data[i].data2);
+					}
+					break;
+				}
+				
+				// lnx - lny
+				case 3:{
+					for(i=0; i<k; i++){
+						data[i].data1 = log(data[i].data1);
+						data[i].data2 = log(data[i].data2);
+					}
+					break;
+				}
+				
+				
+				default:{
+					printf("ERROR: Invalid input!");
+					exit(34);
+				}
+			}
+			
 			CALC:
 			r = (double*)realloc(NULL, k*sizeof(double));
 			sumx=0; sumy=0; sumxy=0; sumx2=0; sumy2=0;
@@ -633,16 +677,16 @@ unsigned char main(){
 			
 			if(del==0){
 				printf("Do you want to skip automatic removal of bad points?\n1-Yes\n0-No\n");
-				scanf("%hhu", &num);
+				scanf("%hhu", &num2);
 				fflush(stdin);
-				if(num!=1 && num!=0){
+				if(num2!=1 && num2!=0){
 					printf("ERROR: Invalid input!\n");
 					exit(333);
 				}
 			}
 			
 			//Whether line is good enough aproximation (ie. is there a bad point)
-			if(R>=(1-sqrt(0.9)) && num==0){
+			if(R>=(1-sqrt(0.9)) && num2==0){
 				del++;
 				removed = (dataset*)realloc(removed, sizeof(dataset)*del);
 				diff = r[0]; difi = 0;
@@ -746,6 +790,7 @@ unsigned char main(){
 			series2->linearInterpolation = true;
 			series2->lineThickness = 1.0;
 			series2->color = CreateRGBColor(0, 0, 1);
+			
 		
 			ScatterPlotSettings *settings = GetDefaultScatterPlotSettings();
 			settings->width = 1920;
@@ -756,6 +801,47 @@ unsigned char main(){
 			settings->yMin = cmin2;
 			settings->yMax = cmax2;
 			settings->autoPadding = true;
+			
+			//getting axis names
+			switch(num){
+				// x - y
+				case 0:{
+					settings->xLabel = L"X";
+					settings->xLabelLength = wcslen(settings->xLabel);
+					settings->yLabel = L"Y";
+					settings->yLabelLength = wcslen(settings->yLabel);
+					break;
+				}
+				
+				// lnx - y
+				case 1:{
+					settings->xLabel = L"lnX";
+					settings->xLabelLength = wcslen(settings->xLabel);
+					settings->yLabel = L"Y";
+					settings->yLabelLength = wcslen(settings->yLabel);
+					break;
+				}
+				
+				// x - lny
+				case 2:{
+					settings->xLabel = L"X";
+					settings->xLabelLength = wcslen(settings->xLabel);
+					settings->yLabel = L"lnY";
+					settings->yLabelLength = wcslen(settings->yLabel);
+					break;
+				}
+				
+				// lnx - lny
+				case 3:{
+					settings->xLabel = L"lnX";
+					settings->xLabelLength = wcslen(settings->xLabel);
+					settings->yLabel = L"lnY";
+					settings->yLabelLength = wcslen(settings->yLabel);
+					break;
+				}
+			}
+			settings->title = L"Linear regression y(x)";
+			settings->titleLength = wcslen(settings->title);
 			ScatterPlotSeries *s [] = {series, series2};
 			settings->scatterPlotSeries = s;
 			settings->scatterPlotSeriesLength = 2;
@@ -778,6 +864,7 @@ unsigned char main(){
 		}
 	}
 	
+	//whether to redo
 	printf("Do you want to redo?\n1-Yes\n0-No\n");
 	fflush(stdin);
 	scanf("%hhu", &num);
